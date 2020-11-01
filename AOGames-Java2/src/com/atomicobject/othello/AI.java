@@ -7,6 +7,7 @@ public class AI
 {
     
     static int INF = 10000;
+    static int inc = 0;
     public AI() 
     {
         
@@ -118,23 +119,23 @@ public class AI
         
         // If Maximizer has won or if Minimizer has won
         if (score == 100)
-            return score;
+            return score;// - depth;
         
         if(score == -100)
-            return score;
+            return score;// + depth;
         
         // If there are no moves left and no winner then there is a tie.
         if (movesLeft(state) == false)
             return 0;
         
-//      if(depth == 8)
-//          return score;
+        if(depth == 9)
+            return score;
         
         int[][] b = state.getBoard();
         int numColumns = b[0].length;
         int numRows = b.length;
         
-        //fill temp with all the values of the board
+        // fill temp with all the values of the board
         int[][] temp = new int[numRows][numColumns];
         
         for (int i = 0; i < numRows; i++) 
@@ -219,7 +220,7 @@ public class AI
     {
         int bestVal = -INF;
         int move = -1;
-        int moveVal;
+        int moveVal = 0;
         int[][] b = state.getBoard();
         int numColumns = b[0].length;
         int numRows = b.length;
@@ -247,33 +248,40 @@ public class AI
                     
                     // Compute evaluation function for this move
                     moveVal = minimax(state, 0, false, -INF, INF);
-                
                     // Undo the move
                     temp[row][col] = 0;
-                    state.setBoard(temp);
-                        
+                    state.setBoard(temp);         
+                    
                     if (moveVal > bestVal) 
                     {
                         move = col;
                         bestVal = moveVal;
                     }
+                    break;
                 }
             }
         }
+        
+        if (inc < 2) {
+	        ++inc;
+	        return 3;
+        }
+
         return move;
     }
+    
     
     // Used for testing only
     public static void main(String[] args) 
     {
         GameState state = new GameState();
         state.setPlayer(1);
-        state.setBoard(new int[][]{{0, 1, 0, 0, 0, 0, 0},
-                                   {2, 1, 0, 0, 0, 0, 0},
-                                   {2, 1, 0, 0, 0, 0, 0},
-                                   {1, 2, 0, 1, 2, 1, 1},
-                                   {2, 2, 1, 2, 2, 2, 1},
-                                   {1, 2, 2, 1, 0, 2, 2}});
+        state.setBoard(new int[][]{{0, 0, 0, 0, 0, 0, 0},
+					               {0, 0, 0, 0, 0, 0, 0},
+					               {0, 0, 0, 0, 0, 0, 0},
+					               {0, 0, 2, 0, 0, 0, 0},
+					               {0, 0, 2, 0, 0, 0, 0},
+					               {0, 1, 2, 1, 0, 0, 1}});
         AI ai = new AI();
         System.out.printf("Final answer: %d", ai.computeMove(state));
     }
