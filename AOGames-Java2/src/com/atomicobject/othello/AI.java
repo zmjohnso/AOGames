@@ -62,7 +62,6 @@ public class AI
             {
                 if (b[row][col] == b[row+1][col] && b[row+1][col] == b[row+2][col] && b[row+1][col] == b[row+3][col]) 
                 {
-                    //System.out.println("This is val2 in evaluate:" + b[row][col]);
                     if (b[row][col] == p) 
                         return 100;
                     else if (b[row][col] == q) 
@@ -78,7 +77,6 @@ public class AI
             {
                 if (b[row][col] == b[row+1][col+1] && b[row+1][col+1] == b[row+2][col+2] && b[row+1][col+1] == b[row+3][col+3]) 
                 {
-                    //System.out.println("This is val3 in evaluate:" + b[row][col]);
                     if (b[row][col] == p) 
                     {
                         return 100;
@@ -98,7 +96,6 @@ public class AI
             {
                 if (b[row][col] == b[row+1][col-1] && b[row+1][col-1] == b[row+2][col-2] && b[row+1][col-1] == b[row+3][col-3]) 
                 {
-                    //System.out.println("This is val4 in evaluate:" + b[row][col]);
                     if (b[row][col] == p) 
                     {
                         return 100;
@@ -119,16 +116,20 @@ public class AI
     {
         int score = evaluate(state);
         
-        if(depth == 7)
-            return score;
         // If Maximizer has won or if Minimizer has won
-        if (score == 100 || score == -100)
+        if (score == 100)
+            return score;
+        
+        if(score == -100)
             return score;
         
         // If there are no moves left and no winner then there is a tie.
         if (movesLeft(state) == false)
             return 0;
-    
+        
+//      if(depth == 8)
+//          return score;
+        
         int[][] b = state.getBoard();
         int numColumns = b[0].length;
         int numRows = b.length;
@@ -143,6 +144,7 @@ public class AI
         }
         
         int p = state.getPlayer();
+        
         // If this is the Maximizer's turn
         if (isMaximizer) 
         {
@@ -151,39 +153,40 @@ public class AI
             // Traverse all cells
             for (int col = 0; col < numColumns; ++col) {
                 for (int row = numRows - 1; row >= 0; --row) {
-                    if (b[row][col] == 0) {
+                    if (b[row][col] == 0) 
+                    {
                         // Make the move
                         temp[row][col] = p;
                         state.setBoard(temp);
                         
-                        int val = minimax(state, depth + 1, false, alpha, beta); //!isMaximizer
+                        int val = minimax(state, depth + 1, !isMaximizer, alpha, beta); //false
                         best = Math.max(best, val);
                         alpha = Math.max(alpha, best);
                         
-                        // Alpha Beta Pruning
-                        if (beta <= alpha) 
-                        {
-                            // Undo the move
-                            temp[row][col] = 0;
-                            state.setBoard(temp);
-                            break;
-                        }
                         // Undo the move
                         temp[row][col] = 0;
                         state.setBoard(temp);
+                        
                         //break once you find first available move in column
                         break;
                     }
                 }
+                // Alpha Beta Pruning
+                if (beta <= alpha) 
+                    break;
             }
             return best - depth;
-        } else {
+        } 
+        else 
+        {
             int best = INF;
             int q = -1;
             // Traverse all cells
             for (int col = 0; col < numColumns; ++col) {
-                for (int row = numRows - 1; row >= 0; --row) {
-                    if (b[row][col] == 0) {
+                for (int row = numRows - 1; row >= 0; --row) 
+                {
+                    if (b[row][col] == 0) 
+                    {
                         // Make the move
                         if (p == 1)
                             q = 2;
@@ -193,22 +196,20 @@ public class AI
                         temp[row][col] = q;
                         state.setBoard(temp);
                         
-                        int val = minimax(state, depth + 1, true, alpha, beta); //!isMaximizer
+                        int val = minimax(state, depth + 1, !isMaximizer, alpha, beta); //true
                         best = Math.min(best, val);
                         beta = Math.min(beta,  best);
-                        // Alpha Beta Pruning
-                        if (beta <= alpha) {
-                            // Undo the move
-                            temp[row][col] = 0;
-                            state.setBoard(temp);
-                            break;
-                        }
+                        
                         // Undo the move
                         temp[row][col] = 0;
                         state.setBoard(temp);
+                       
                         break;
                     }
                 }
+                // Alpha Beta Pruning
+                if (beta <= alpha) 
+                    break;
             }
             return best + depth;
         }
@@ -218,7 +219,7 @@ public class AI
     {
         int bestVal = -INF;
         int move = -1;
-        
+        int moveVal;
         int[][] b = state.getBoard();
         int numColumns = b[0].length;
         int numRows = b.length;
@@ -233,6 +234,7 @@ public class AI
                 temp[i][j] = b[i][j];
         }
         
+        //check for valid moves
         for (int col = 0; col < numColumns; ++col) 
         {
             for (int row = numRows - 1; row >= 0; --row) 
@@ -244,15 +246,12 @@ public class AI
                     state.setBoard(temp);
                     
                     // Compute evaluation function for this move
-                    int moveVal;
-                    if(p == 1)
-                        moveVal = minimax(state, 0, false, -INF, INF); //true?
-                    else
-                        moveVal = minimax(state, 0, false, -INF, INF);
-                    
+                    moveVal = minimax(state, 0, false, -INF, INF);
+                
                     // Undo the move
                     temp[row][col] = 0;
                     state.setBoard(temp);
+                        
                     if (moveVal > bestVal) 
                     {
                         move = col;
@@ -268,14 +267,13 @@ public class AI
     public static void main(String[] args) 
     {
         GameState state = new GameState();
-        state.setPlayer(2);
+        state.setPlayer(1);
         state.setBoard(new int[][]{{0, 1, 0, 0, 0, 0, 0},
                                    {2, 1, 0, 0, 0, 0, 0},
                                    {2, 1, 0, 0, 0, 0, 0},
-                                   {1, 2, 0, 2, 2, 1, 1},
+                                   {1, 2, 0, 1, 2, 1, 1},
                                    {2, 2, 1, 2, 2, 2, 1},
-                                   {1, 2, 2, 1, 0, 2, 2},
-                                   });
+                                   {1, 2, 2, 1, 0, 2, 2}});
         AI ai = new AI();
         System.out.printf("Final answer: %d", ai.computeMove(state));
     }
