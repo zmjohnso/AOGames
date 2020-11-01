@@ -9,6 +9,7 @@ class AITest {
 	@Test
 	public void blockTest1() {
 				AI ai = new AI();
+				ai.inc = 2;
 				GameState state = new GameState();
 				state.setPlayer(1);
 				state.setBoard(new int[][]{{0, 0, 0, 0, 0, 0, 0},
@@ -39,6 +40,7 @@ class AITest {
 	@Test
 	public void complexMid() {
 				AI ai = new AI();
+				ai.inc = 2;
 				GameState state = new GameState();
 				state.setPlayer(2);
 				state.setBoard(new int[][]{{1, 1, 0, 0, 0, 0, 0},
@@ -69,6 +71,7 @@ class AITest {
 	@Test
 	public void takeMid3() {
 				AI ai = new AI();
+				ai.inc = 2;
 				GameState state = new GameState();
 				state.setPlayer(1);
 				state.setBoard(new int[][]{{0, 0, 0, 0, 0, 0, 0},
@@ -80,5 +83,52 @@ class AITest {
 				
 				assertEquals(2, ai.computeMove(state));
 	}
+	
+	@Test
+	public void timeConern1() {
+				AI ai = new AI();
+				ai.inc = 2;
+				GameState state = new GameState();
+				state.setPlayer(1);
+				state.setBoard(new int[][]{{0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 0, 0, 0, 0, 0},
+						                   {2, 0, 2, 0, 0, 0, 0},
+						                   {1, 0, 2, 1, 2, 0, 1},
+						                   {1, 0, 2, 1, 2, 0, 1}});
+				
+				assertEquals(2, ai.computeMove(state));
+	}
 
+	@Test
+	public void timeConern2() {
+				AI ai = new AI();
+				ai.inc = 2;
+				GameState state = new GameState();
+				state.setPlayer(1);
+				state.setBoard(new int[][]{{0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 2, 0, 0, 0, 0},
+						                   {0, 0, 2, 0, 0, 0, 1},
+						                   {0, 0, 2, 0, 0, 1, 1}});
+				
+				assertEquals(2, ai.computeMove(state));
+	}
+	
+	@Test
+	public void timeConern3() {
+				AI ai = new AI();
+				ai.inc = 2;
+				GameState state = new GameState();
+				state.setPlayer(1);
+				state.setBoard(new int[][]{{0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 0, 0, 0, 0, 0},
+						                   {0, 0, 1, 1, 0, 2, 0},
+						                   {0, 0, 2, 1, 0, 2, 0}});
+				
+				assertEquals(0, ai.computeMove(state));
+	}
 }
